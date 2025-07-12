@@ -11,31 +11,129 @@ const AskQuestion = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!user) {
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   console.log("user :", user);
+
+  //   if (!title.trim() || !description.trim() || tags.length === 0) {
+  //     alert("Please fill in all fields");
+  //     return;
+  //   }
+
+  //   setIsSubmitting(true);
+
+  //   const response = await fetch("http://localhost:5000/api/questions", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${localStorage.getItem("stackit_token")}`,
+  //     },
+  //     body: JSON.stringify({
+  //       author_id: user.id,
+  //       title: title,
+  //       description: description,
+  //       tags: tags.map((tag) => tag.value),
+  //       image_url: image,
+  //     }),
+  //   });
+  //   const data = await response.json();
+  //   setIsSubmitting(false);
+  //   if (response.ok) {
+  //     alert("Question posted successfully!");
+  //     navigate(`/questions/${data.id}`);
+  //   } else {
+  //     alert(data.message || "Failed to post question");
+  //   }
+  //   setTitle("");
+  //   setDescription("");
+  //   setTags([]);
+  //   setIsPreview(false);
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+
+    if (!user) return navigate("/login");
 
     if (!title.trim() || !description.trim() || tags.length === 0) {
-      alert("Please fill in all fields");
+      alert("Please fill in all required fields.");
       return;
     }
 
-    setIsSubmitting(true);
+    // setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    let uploadedImageUrl = image;
 
-    // In a real app, this would make an API call to create the question
-    console.log("Creating question:", { title, description, tags });
+    // If image is a File (not already a URL), upload it
+    if (image && typeof image !== "string") {
+      const formData = new FormData();
+      formData.append("image", image);
 
-    setIsSubmitting(false);
-    navigate("/");
+      try {
+        const uploadRes = await fetch("/api/questions/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("stackit_token")}`,
+          },
+          body: formData,
+        });
+
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok || !uploadData.url) {
+          throw new Error(uploadData.message || "Image upload failed");
+        }
+
+        uploadedImageUrl = uploadData.url;
+      } catch (err) {
+        alert(err.message);
+        // setIsSubmitting(false);
+        return;
+      }
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/questions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("stackit_token")}`,
+        },
+        body: JSON.stringify({
+          author_id: user.id,
+          title,
+          description,
+          tags: tags.map((tag) => tag.value),
+          image_url: uploadedImageUrl,
+        }),
+      });
+
+      const data = await response.json();
+      setIsSubmitting(false);
+
+      if (response.ok) {
+        alert("Question posted successfully!");
+        navigate(`/questions/${data.id}`);
+        setTitle("");
+        setDescription("");
+        setTags([]);
+        setImage(null);
+        setImagePreview(null);
+      } else {
+        alert(data.message || "Failed to post question.");
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      alert("An unexpected error occurred.");
+      console.error("Submit Error:", error);
+    }
   };
 
   if (!user) {
@@ -98,7 +196,10 @@ const AskQuestion = () => {
             </label>
             <button
               type="button"
-              onClick={() => setIsPreview(!isPreview)}
+              onClick={() => {
+                setIsPreview(!isPreview);
+                setImagePreview(!imagePreview);
+              }}
               className="flex items-center space-x-2 px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
             >
               <Eye className="w-4 h-4" />
@@ -106,6 +207,15 @@ const AskQuestion = () => {
             </button>
           </div>
 
+          {imagePreview && (
+            <div className="mb-4">
+              <img
+                src={image}
+                alt="Preview"
+                className="max-w-full h-auto rounded-lg mb-2"
+              />
+            </div>
+          )}
           {isPreview ? (
             <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-32">
               <div
@@ -118,7 +228,11 @@ const AskQuestion = () => {
               />
             </div>
           ) : (
-            <RichTextEditor value={description} onChange={setDescription} />
+            <RichTextEditor
+              value={description}
+              onChange={setDescription}
+              setImage={setImage}
+            />
           )}
           <p className="text-sm text-gray-500 mt-1">
             Include code snippets, error messages, and what you've already tried

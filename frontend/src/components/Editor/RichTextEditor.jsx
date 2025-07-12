@@ -19,6 +19,7 @@ const RichTextEditor = ({
   onChange,
   placeholder = "Write your content...",
   className = "",
+  setImage,
 }) => {
   const editorRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -51,11 +52,55 @@ const RichTextEditor = ({
   };
 
   const insertImage = () => {
-    const url = prompt("Enter image URL:");
-    if (url) {
-      execCommand("insertImage", url);
-    }
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+
+    input.onchange = async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      console.log("Uploading image:", file.name);
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/questions/upload",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("stackit_token")}`,
+              // ❗ DO NOT set "Content-Type" here. Let fetch handle it for FormData.
+            },
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        console.log("Image uploaded:", data);
+
+        if (data?.url) {
+          if (setImage) {
+            setImage(data.url);
+          }
+          execCommand("insertHTML", `<img src="${data.url}" alt="Image" />`);
+          execCommand("insertImage", data.url);
+          if (editorRef.current) {
+            onChange(editorRef.current.innerHTML);
+          }
+        } else {
+          throw new Error(data.message || "No URL returned");
+        }
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        alert("Image upload failed. Please try again.");
+      }
+    };
+
+    input.click();
   };
+
   const formatCodeBlock = () => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;

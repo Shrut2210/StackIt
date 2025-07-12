@@ -14,19 +14,51 @@ const QuestionDetail = () => {
   const [newAnswer, setNewAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // api call to fetch question details and answers
+  const [question, setQuestion] = useState({
+    id,
+    title: "Sample Question Title",
+    description: "<p>This is a sample question description.</p>",
+    createdAt: new Date(),
+    views: 123,
+    votes: 10,
+    tags: ["react", "javascript"],
+    author: {
+      username: "john_doe",
+      avatar: "https://via.placeholder.com/40",
+      reputation: 150,
+    },
+  });
+  const [answers, setAnswers] = useState([
+    {
+      id: 1,
+      content: "<p>This is a sample answer.</p>",
+      createdAt: new Date(),
+      votes: 5,
+      isAccepted: false,
+      author: {
+        username: "jane_doe",
+        avatar: "https://via.placeholder.com/40",
+        reputation: 200,
+      },
+    },
+  ]);
   useEffect(() => {
-    const fetchQuestion = async () => {
-      try {
-        const res = await fetch(`/api/questions/${id}`);
-        setQuestion(res.data.question);
-      } catch (error) {
-        console.error("Failed to fetch question:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchQuestion();
+    // get question details and answers from API
+    fetch(`http://localhost:5000/api/questions/${id}/answers`)
+      .then((res) => res.json())
+      .then((data) => {
+        data.question.createdAt = new Date(data.question.createdAt);
+        if (data.answers.length > 0) {
+          data.answers = data.answers.map((a) => ({
+            ...a,
+            createdAt: new Date(a.createdAt),
+          }));
+        }
+        setQuestion(data.question);
+        setAnswers(data.answers);
+      })
+      .catch((err) => console.error("Error fetching question details:", err));
   }, [id]);
 
   const handleAnswerSubmit = async (e) => {
@@ -42,8 +74,10 @@ const QuestionDetail = () => {
     setIsSubmitting(false);
   };
 
-  if (loading) return <div className="text-center py-12">Loading question...</div>;
-  if (!question) return <div className="text-center py-12">Question not found.</div>;
+  if (loading)
+    return <div className="text-center py-12">Loading question...</div>;
+  if (!question)
+    return <div className="text-center py-12">Question not found.</div>;
 
   const answers = question.answers || [];
 
@@ -65,10 +99,7 @@ const QuestionDetail = () => {
             <div className="flex items-center space-x-6 text-sm text-gray-500 mb-6">
               <div className="flex items-center space-x-1">
                 <Clock className="w-4 h-4" />
-                <span>
-                  asked{" "}
-                  {formatDistanceToNow(question.createdAt, { addSuffix: true })}
-                </span>
+                <span>asked</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Eye className="w-4 h-4" />

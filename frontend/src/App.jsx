@@ -20,7 +20,10 @@ function App() {
             <main className="pt-16">
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/question/:id" element={<QuestionDetail />} />
+                <Route
+                  path="/questions/:id/answers"
+                  element={<QuestionDetail />}
+                />
                 <Route path="/ask" element={<AskQuestion />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
