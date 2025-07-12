@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "stackit-465709",
+  "private_key_id": "51918e4a835ccd1223716e7fcdf9d48bd0a130b1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC+uUsy+ZF/wCT0\nljr4AIYd1JybJBf1nhmYpUZ20glxyjGDeEDd2cdlm+/+waJOLRBasYBjjSvCJ/uf\nGUNFD75Tk10wM1zPBzk6DEpsLZbHzFn62zJyITTcF4+UO2TObpx7ONmmU0udgaZo\n8RBhIcEJizN8/9R/gLbXwKZH+5BLSK8Fu0csRIR2DLDnI+4DrMG2tQK5x2ueyjkl\nZMGhBsIECN3x0SDgtbANKX+vw7DCwfaVa5znzNlgcC0t0MV8fISuywlv2m6mA28F\n1wQ3oiUfo6QSiiokLcWQiThtceOGp048pcG0p7j0qlR6jZo9pdJTYnvbriEZlBbS\nmuchCTM1AgMBAAECggEAFG4cWlBGD/l46/NYyz6hHzpqcSr3XxHpu4J+zxUWOmh2\nj9b2md0tgRqoZXGADaBBp3lqn59cb96hE0ydOl1inajEO3jRCQNE081Dvp1OkMX4\n4IiQ+Y1JkIb8lBwdowhRvlhbZjf3el6MQSMLhmAbgcZ1xD7SWDslOuzR0xWlQg8O\niwGOd2Zvw9MoIhVitOL3dzolpUGgTs6FkJ4QCdct7RjgMViUZfJ6giae2BqU8SKh\nS25zYvRaglOTRyOIRo/ZNySuasvokyHzz9hhJ7ktgitO5de0C1IX9BuiIzZM1Ta3\nBGmjvHi9NaAUqtFf25bVr3s6KmEUKzB+I+Z+aJQFYQKBgQDfLATuL2Uo/tQxT+Gy\nlJr+ahQOiuxtIDPJYiB3PyUIPWOX8lupBlBTcT3sBdXgLEnXIdMXQU3uKZ2/YtcM\n49Cpnh9gOnQTl6305Yc99Fv0JLvw6zgDzxdCv8C1XFddxu41nUrqC+9+Jo1mti7+\nGyqVBSx6+YUNBtbJboi9LZup4QKBgQDax2AbTqag5XzIS5BZkCM+nGco8+hPmzXj\neSUkmRn5Sh8kIZS/PkotkojfcOF11ZkniR622KxbUCBTT5A8w4OmqfMkIICIp7e+\n498YPlt89A5g7TDE8KoyeUeyO2WyAko0NqMfINSJ9ZqpalVqAST/I0aGulABCY2j\nb6mIJh471QKBgEDkG8rmHRP+hNSR1Z6Hd0nirlJMMtLIOkakMax6v9nVf8/+uIg9\nPb4Ff2vRho7YUeAsBaUNaAuILkYoBz/IPjQTtivU00ufHwXGd7ycAODMjZlPy8nP\nvYO7Hd2eLAkofrs4MUA8mDamHxdugduBKrCKAJUBWJ6hDnMjoL7hNBIBAoGBAMEz\nfnC/BTFjV829xU0Cl81L62Hj+0yJoY4vRpjKR4C5b0TGDwjQJkuWcx73HXOk3Gpo\nkeIg+BxvZwyLX7H5asJ8pMZLmZaUnhSKQVK0hrCTCjuYWxAgA/0s0x7Xi1gm44a2\nlVkA8hCe/yULTUCeoCBb84U49TvlRtqE2m7sUpi9AoGBANDZFifyiX1URP93TsJA\nIiemPqeNrNEG0A83yVcSEBhmePUkdCtZmfBmuE0QR3OrXbSG7rjuqznenuFIKt7T\n8TPyjSQEowTTWHJ1wpISHvqVigYRMBw9spd6WG2mLx2wsagPaDIgnKwDhaj3u3GQ\nYvyiAiHHBB/a7wiuMvVV3e3S\n-----END PRIVATE KEY-----\n",
+  "client_email": "stackit@stackit-465709.iam.gserviceaccount.com",
+  "client_id": "116620436885638080579",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/stackit%40stackit-465709.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
