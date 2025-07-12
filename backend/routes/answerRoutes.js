@@ -22,7 +22,7 @@ function answerRoutes(supabase) {
 
             const imageCheckData = await imageCheckResponse.json();
 
-            if (!imageCheckData.result == 'safe') {
+            if (!imageCheckData.result == 'Safe') {
             return res
                 .status(403)
                 .json({ status: 403, message: "Unsafe image content detected" });

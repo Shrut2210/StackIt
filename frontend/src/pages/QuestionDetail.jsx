@@ -282,5 +282,6 @@ const QuestionDetail = () => {
     </div>
   );
 };
+}
 
 export default QuestionDetail;
