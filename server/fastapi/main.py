@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from model import check_comment
 
+# run using the following command
+# uvicorn main:app --reload
+
 app = FastAPI()
 
 class TextInput(BaseModel):
