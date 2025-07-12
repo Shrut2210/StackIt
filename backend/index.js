@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { createClient } = require("@supabase/supabase-js");
 
+
 const app = express();
 
 // Supabase client
@@ -20,6 +21,14 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use((req, res, next) => {
+  req.supabase = supabase;
+  next();
+});
+
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
 const userRoutes = require("./routes/userRoutes");
 app.use("/api/users", userRoutes(supabase));
 
@@ -31,6 +40,9 @@ app.use("/api/answers", answerRoutes(supabase));
 
 const tagRoutes = require("./routes/tagRoutes");
 app.use("/api/tags", tagRoutes(supabase));
+
+const questionTagRoutes = require("./routes/questionTagRoutes");
+app.use("/api/question-tags", questionTagRoutes(supabase));
 
 // 404 Not Found Handler
 app.use((req, res) => {

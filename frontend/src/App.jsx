@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import Navbar from "./components/Layout/Navbar";
-// import HomePage from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 // import QuestionDetail from "./pages/QuestionDetail";
 // import AskQuestion from "./pages/AskQuestion";
 import LoginPage from "./pages/LoginPage";
@@ -15,7 +15,7 @@ function App() {
         {/* <Navbar /> */}
         <main className="pt-16">
           <Routes>
-            {/* <Route path="/" element={<HomePage />} /> */}
+            <Route path="/" element={<HomePage />} />
             {/* <Route path="/question/:id" element={<QuestionDetail />} /> */}
             {/* <Route path="/ask" element={<AskQuestion />} /> */}
             <Route path="/login" element={<LoginPage />} />
