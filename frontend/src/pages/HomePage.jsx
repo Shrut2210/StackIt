@@ -46,7 +46,6 @@ const HomePage = () => {
             A place to ask questions, share knowledge, and learn together
           </p>
         </div>
-        
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -98,7 +97,10 @@ const HomePage = () => {
           ) : (
             <div className="space-y-4">
               {questions.map((question) => (
-                <Link href={`'question/' +  ${question.id}`}>
+                <Link
+                  href={`'question/' +  ${question.id}+'/answers'`}
+                  key={question.id}
+                >
                   <QuestionCard
                     key={question.id}
                     question={{
@@ -112,12 +114,12 @@ const HomePage = () => {
                           "https://via.placeholder.com/100",
                         reputation: Math.floor(Math.random() * 1000),
                       },
-                      tags: ["javascript"], 
+                      tags: ["javascript"],
                       createdAt: new Date(question.created_at),
                       views: Math.floor(Math.random() * 1000),
                       answers: Math.floor(Math.random() * 5),
                       votes: Math.floor(Math.random() * 30),
-                      hasAcceptedAnswer: false, 
+                      hasAcceptedAnswer: false,
                     }}
                   />
                 </Link>
