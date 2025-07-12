@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { createClient } = require("@supabase/supabase-js");
 
+
 const app = express();
 
 // Supabase client
@@ -20,6 +21,14 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use((req, res, next) => {
+  req.supabase = supabase;
+  next();
+});
+
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
 const userRoutes = require("./routes/userRoutes");
 app.use("/api/users", userRoutes(supabase));
 
