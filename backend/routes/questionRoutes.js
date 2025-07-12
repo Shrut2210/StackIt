@@ -175,6 +175,19 @@ function questionRoutes(supabase) {
   router.get("/:id/answers", async (req, res) => {
     try {
       const { id } = req.params;
+      // fetch author details
+      if (!id) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "Question ID is required" });
+      }
+
+      // Fetch author details
+      const { data: author, error: authorError } = await supabase
+        .from("users")
+        .select("username, avatar, reputation")
+        .eq("id", id)
+        .single();
 
       // Fetch question details
       const { data: question, error: questionError } = await supabase
@@ -195,17 +208,39 @@ function questionRoutes(supabase) {
         .select("*")
         .eq("question_id", id)
         .order("created_at", { ascending: false });
-
       if (answersError) {
         return res
           .status(500)
           .json({ status: 500, message: answersError.message });
+      }
+      // fetxh tags for the question
+      const { data: tags, error: tagsError } = await supabase
+        .from("question_tags")
+        .select("tag_id")
+        .eq("question_id", id);
+      if (tagsError) {
+        return res
+          .status(500)
+          .json({ status: 500, message: tagsError.message });
+      }
+
+      const { data: listTags, error: listtagerr } = await supabase
+        .from("tags")
+        .select("*")
+        .in(
+          "id",
+          tags.map((tag) => tag.tag_id)
+        );
+      if (listtagerr) {
+        return res.status(500).json({ status: 500, message: error.message });
       }
 
       res.status(200).json({
         status: 200,
         message: "Question and answers fetched successfully",
         question,
+        author,
+        listTags,
         answers,
       });
     } catch (err) {
