@@ -98,27 +98,29 @@ const HomePage = () => {
           ) : (
             <div className="space-y-4">
               {questions.map((question) => (
-                <QuestionCard
-                  key={question.id}
-                  question={{
-                    id: question.id,
-                    title: question.title,
-                    description: `<p>${question.description}</p>`,
-                    author: {
-                      username: `user-${question.author_id}`,
-                      avatar:
-                        question.image_url ||
-                        "https://via.placeholder.com/100",
-                      reputation: Math.floor(Math.random() * 1000),
-                    },
-                    tags: ["javascript"], 
-                    createdAt: new Date(question.created_at),
-                    views: Math.floor(Math.random() * 1000),
-                    answers: Math.floor(Math.random() * 5),
-                    votes: Math.floor(Math.random() * 30),
-                    hasAcceptedAnswer: false, 
-                  }}
-                />
+                <Link href={`'question/' +  ${question.id}`}>
+                  <QuestionCard
+                    key={question.id}
+                    question={{
+                      id: question.id,
+                      title: question.title,
+                      description: `<p>${question.description}</p>`,
+                      author: {
+                        username: `user-${question.author_id}`,
+                        avatar:
+                          question.image_url ||
+                          "https://via.placeholder.com/100",
+                        reputation: Math.floor(Math.random() * 1000),
+                      },
+                      tags: ["javascript"], 
+                      createdAt: new Date(question.created_at),
+                      views: Math.floor(Math.random() * 1000),
+                      answers: Math.floor(Math.random() * 5),
+                      votes: Math.floor(Math.random() * 30),
+                      hasAcceptedAnswer: false, 
+                    }}
+                  />
+                </Link>
               ))}
             </div>
           )}
