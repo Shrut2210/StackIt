@@ -118,11 +118,7 @@ const AskQuestion = () => {
               />
             </div>
           ) : (
-            <RichTextEditor
-              value={description}
-              onChange={setDescription}
-              placeholder="Provide more details about your question. Include what you've tried and what specific help you need."
-            />
+            <RichTextEditor value={description} onChange={setDescription} />
           )}
           <p className="text-sm text-gray-500 mt-1">
             Include code snippets, error messages, and what you've already tried
