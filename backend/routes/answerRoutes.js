@@ -10,8 +10,24 @@ function answerRoutes(supabase) {
     // Upload image for answer
     router.post("/upload", upload.single("image"), async (req, res) => {
         try {
+
             if (!req.file) return res.status(400).json({ status: 400, message: "No image uploaded" });
             const url = await uploadImage(req.file);
+
+            const imageCheckResponse = await fetch("http://localhost:8000/check-image", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ path: url }),
+            });
+
+            const imageCheckData = await imageCheckResponse.json();
+
+            if (!imageCheckData.result == 'safe') {
+            return res
+                .status(403)
+                .json({ status: 403, message: "Unsafe image content detected" });
+            }
+
             res.status(200).json({ status: 200, message: "Image uploaded successfully", url });
         } catch (err) {
             res.status(500).json({ status: 500, message: err.message });
@@ -28,6 +44,20 @@ function answerRoutes(supabase) {
                     status: 400,
                     message: "question_id, author_id, and content are required",
                 });
+            }
+
+            const textCheckResponse = await fetch("http://localhost:8000/check", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: content }),
+            });
+
+            const textCheckData = await textCheckResponse.json();
+
+            if (!textCheckData.result == 'safe') {
+                return res
+                .status(403)
+                .json({ status: 403, message: "Unsafe text content detected" });
             }
 
             const created_at = new Date().toISOString();

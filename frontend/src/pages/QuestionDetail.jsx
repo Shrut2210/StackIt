@@ -9,7 +9,6 @@ import { useAuth } from "../contexts/AuthContext";
 const QuestionDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
-  const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [newAnswer, setNewAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,24 +61,44 @@ const QuestionDetail = () => {
   }, [id]);
 
   const handleAnswerSubmit = async (e) => {
-    e.preventDefault();
-    if (!newAnswer.trim()) return;
+  e.preventDefault();
+  if (!newAnswer.trim()) return;
 
-    setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  setIsSubmitting(true);
 
-    console.log("Submitting answer:", newAnswer);
-    setNewAnswer("");
+  try {
+    const response = await fetch("http://localhost:3000/api/answers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question_id: answers[0].id,  
+        author_id: answers[0].author.username,        
+        content: newAnswer,
+        image_url: answers[0].author.avatar,            
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.status === 201) {
+      console.log("✅ Answer submitted:", data);
+      setNewAnswer("");
+    } else {
+      console.error("🚫 Error submitting:", data.message);
+      alert(data.message); 
+    }
+  } catch (err) {
+    console.error("❌ Server error:", err.message);
+  } finally {
     setIsSubmitting(false);
-  };
+  }
+};
+
 
   if (loading)
     return <div className="text-center py-12">Loading question...</div>;
   if (!question)
     return <div className="text-center py-12">Question not found.</div>;
-
-  const answers = question.answers || [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
