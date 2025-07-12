@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, set } from "date-fns";
 import { Eye, Clock, CheckCircle, Plus } from "lucide-react";
 import VotingButtons from "../components/Votings/VotingButtons";
 import RichTextEditor from "../components/Editor/RichTextEditor";
@@ -9,6 +9,12 @@ import { useAuth } from "../contexts/AuthContext";
 const QuestionDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const [uuser, setuUser] = useState({
+    username: "john_doe",
+    avatar: "https://via.placeholder.com/40",
+    reputation: 150,
+  });
+
   const [newAnswer, setNewAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tags, setTags] = useState([]);
@@ -56,6 +62,7 @@ const QuestionDetail = () => {
 
         setQuestion(data.question);
         setTags(data.listTags);
+        setuUser(data.author);
         setAnswers(data.answers);
       })
       .catch((err) => console.error("Error fetching question details:", err));
@@ -66,12 +73,44 @@ const QuestionDetail = () => {
     if (!newAnswer.trim()) return;
 
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // API call to submit the answer
 
-    console.log("Submitting answer:", newAnswer);
-    setNewAnswer("");
-    setIsSubmitting(false);
+    try {
+      const response = await fetch(`http://localhost:5000/api/answers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question_id: id,
+          author_id: user.id, // Assuming user.id is available
+          content: newAnswer,
+          image_url: null, // Handle image upload if needed
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setAnswers((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            content: newAnswer,
+            createdAt: new Date(),
+            votes: 0,
+            isAccepted: false,
+          },
+        ]);
+        setNewAnswer("");
+        setIsSubmitting(false);
+      } else {
+        console.error("Error submitting answer:", data.message);
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error("Error submitting answer:", error);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -124,22 +163,22 @@ const QuestionDetail = () => {
             {/* Author Info */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
               <div className="flex items-center space-x-3">
-                <img
-                  src={user.avatar}
-                  alt={user.username}
+                {/* <img
+                  // src={uuser.avatar}
+                  // alt={uuser.username}
                   className="w-8 h-8 rounded-full"
                 />
                 <div>
                   <Link
-                    to={`/user/${user.username}`}
+                    to={`/user/${uuser.username}`}
                     className="text-blue-600 hover:text-blue-800 font-medium"
                   >
-                    {user.username}
+                    {uuser.username}
                   </Link>
                   <p className="text-sm text-gray-500">
-                    {user.reputation} reputation
-                  </p>
-                </div>
+                    {uuser.reputation} reputation
+                  </p> */}
+                {/* </div> */}
               </div>
             </div>
           </div>
