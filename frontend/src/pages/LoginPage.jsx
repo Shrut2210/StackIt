@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, HelpCircle } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginPage = () => {
+  const { login, isLoading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +16,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      console.log(email, password);
+      await login(email, password);
       navigate("/");
     } catch (err) {
       setError("Invalid email or password");
@@ -22,7 +24,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className=" flex items-center justify-center py-10 bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
@@ -137,10 +139,29 @@ const LoginPage = () => {
           <div>
             <button
               type="submit"
+              disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Log in
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  Signing in...
+                </div>
+              ) : (
+                "Sign in"
+              )}
             </button>
+          </div>
+
+          {/* Demo accounts */}
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <p className="text-sm text-gray-600 text-center mb-3">
+              Demo accounts:
+            </p>
+            <div className="space-y-2 text-xs text-gray-500">
+              <p>Regular user: user@stackit.com / password</p>
+              <p>Admin user: admin@stackit.com / password</p>
+            </div>
           </div>
         </form>
       </div>
