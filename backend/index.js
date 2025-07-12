@@ -29,6 +29,9 @@ app.use("/api/questions", questionRoutes(supabase));
 const answerRoutes = require("./routes/answerRoutes");
 app.use("/api/answers", answerRoutes(supabase));
 
+const tagRoutes = require("./routes/tagRoutes");
+app.use("/api/tags", tagRoutes(supabase));
+
 // 404 Not Found Handler
 app.use((req, res) => {
   res.status(404).json({ status: 404, message: "Route not found" });
