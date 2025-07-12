@@ -44,6 +44,12 @@ app.use("/api/tags", tagRoutes(supabase));
 const questionTagRoutes = require("./routes/questionTagRoutes");
 app.use("/api/question-tags", questionTagRoutes(supabase));
 
+const voteRoutes = require("./routes/voteRoutes");
+app.use("/api/votes", voteRoutes(supabase));
+
+const notificationRoutes = require("./routes/notificationRoutes");
+app.use("/api/notifications", notificationRoutes(supabase));
+
 // 404 Not Found Handler
 app.use((req, res) => {
   res.status(404).json({ status: 404, message: "Route not found" });

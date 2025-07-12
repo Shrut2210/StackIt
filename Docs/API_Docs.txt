@@ -1,0 +1,228 @@
+==================================================
+STACKIT - API DOCUMENTATION
+==================================================
+
+===============================
+USERS
+===============================
+
+POST /api/users
+---------------
+- Create a new user
+- Input:
+  {
+    "email": "john@example.com",
+    "password_hash": "hashed_pw",
+    "username": "john123",
+    "avatar_url": "https://...",
+    "created_at": "timestamp"
+  }
+
+GET /api/users
+--------------
+- Get all users
+
+GET /api/users/:id
+------------------
+- Get user by ID
+
+PUT /api/users/:id
+------------------
+- Update user details
+
+DELETE /api/users/:id
+---------------------
+- Delete a user
+
+POST /api/upload/avatar
+-----------------------
+- Upload an avatar image (FormData with file)
+- Returns image URL
+
+===============================
+AUTH (JWT)
+===============================
+
+POST /api/auth/signup
+---------------------
+- Register new user
+- Input:
+  {
+    "email": "john@example.com",
+    "password": "12345678",
+    "username": "john123",
+    "avatar_url": "https://..."
+  }
+
+POST /api/auth/login
+--------------------
+- Login with email + password
+- Input:
+  {
+    "email": "john@example.com",
+    "password": "12345678"
+  }
+
+===============================
+QUESTIONS
+===============================
+
+POST /api/questions
+-------------------
+- Create question
+- Input:
+  {
+    "author_id": 1,
+    "title": "Question title",
+    "description": "Text",
+    "image_url": "optional"
+  }
+
+GET /api/questions
+------------------
+- Get all questions
+
+GET /api/questions/:id
+----------------------
+- Get question by ID
+
+GET /api/questions/user/:userId
+-------------------------------
+- Get all questions by user
+
+PUT /api/questions/:id
+----------------------
+- Update question
+
+DELETE /api/questions/:id
+--------------------------
+- Delete question
+
+POST /api/upload/question-image
+-------------------------------
+- Upload image for question (FormData with file)
+
+===============================
+ANSWERS
+===============================
+
+POST /api/answers
+-----------------
+- Add an answer to a question
+- Input:
+  {
+    "question_id": 2,
+    "author_id": 1,
+    "content": "Answer text",
+    "image_url": "optional"
+  }
+
+GET /api/answers/question/:questionId
+-------------------------------------
+- Get all answers for question
+
+PUT /api/answers/:id
+--------------------
+- Update answer
+
+DELETE /api/answers/:id
+-----------------------
+- Delete answer
+
+POST /api/upload/answer-image
+-----------------------------
+- Upload image for answer (FormData)
+
+===============================
+TAGS & QUESTION_TAGS
+===============================
+
+POST /api/tags
+--------------
+- Create tag
+- Input: { "name": "javascript" }
+
+GET /api/tags
+-------------
+- Get all tags
+
+POST /api/question-tags
+-----------------------
+- Link a tag to question
+- Input: { "question_id": 1, "tag_id": 3 }
+
+GET /api/question-tags/:questionId
+----------------------------------
+- Get all tags for a question
+
+===============================
+VOTES
+===============================
+
+POST /api/votes
+---------------
+- Vote on an answer (user_id from frontend)
+- Input: { "answer_id": 2, "user_id": 1, "vote": 1 }
+
+GET /api/votes/answer/:answerId
+-------------------------------
+- Get total upvotes/downvotes for answer
+
+GET /api/votes/answer/:answerId/counts
+--------------------------------------
+- Get upvote/downvote count separately
+
+GET /api/votes/summary
+----------------------
+- Get all votes grouped by answer_id
+
+===============================
+NOTIFICATIONS
+===============================
+
+POST /api/notifications
+-----------------------
+- Create notification
+- Input: {
+    "user_id": 1,
+    "type": "answer",
+    "reference_id": 3
+  }
+
+GET /api/notifications/user/:userId
+-----------------------------------
+- Get all notifications for a user
+
+PUT /api/notifications/:id/read
+-------------------------------
+- Mark notification as read
+
+DELETE /api/notifications/:id
+-----------------------------
+- Delete a notification
+
+===============================
+NOTES
+===============================
+- All IDs are integers.
+- `created_at` must be ISO timestamp.
+- Images are uploaded via FormData and return a public Supabase URL.
+- Passwords are hashed in backend before storing.
+- No auth middleware used — frontend handles token decoding.
+
+===============================
+STANDARD RESPONSE FORMAT
+===============================
+
+Success:
+{
+  "status": 200/201,
+  "message": "Some message...",
+  "data"?: {...}
+}
+
+Error:
+{
+  "status": 400/500,
+  "message": "Error message"
+}
