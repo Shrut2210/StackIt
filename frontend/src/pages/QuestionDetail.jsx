@@ -69,36 +69,9 @@ const QuestionDetail = () => {
   }, [id]);
 
   const handleAnswerSubmit = async (e) => {
-  e.preventDefault();
-  if (!newAnswer.trim()) return;
+    e.preventDefault();
+    if (!newAnswer.trim()) return;
 
-  setIsSubmitting(true);
-
-  try {
-    const response = await fetch("http://localhost:3000/api/answers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        question_id: answers[0].id,  
-        author_id: answers[0].author.username,        
-        content: newAnswer,
-        image_url: answers[0].author.avatar,            
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.status === 201) {
-      console.log("✅ Answer submitted:", data);
-      setNewAnswer("");
-    } else {
-      console.error("🚫 Error submitting:", data.message);
-      alert(data.message); 
-    }
-  } catch (err) {
-    console.error("❌ Server error:", err.message);
-  } finally {
-    setIsSubmitting(false);
     setIsSubmitting(true);
     // API call to submit the answer
 
@@ -197,7 +170,7 @@ const QuestionDetail = () => {
                 />
                 <div>
                   <Link
-                    to={`/user/${uuser.username}`}
+                    to={/user/${uuser.username}}
                     className="text-blue-600 hover:text-blue-800 font-medium"
                   >
                     {uuser.username}
@@ -328,6 +301,5 @@ const QuestionDetail = () => {
     </div>
   );
 };
-}
 
 export default QuestionDetail;
