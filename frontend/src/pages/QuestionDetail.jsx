@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, Clock, CheckCircle, Plus } from "lucide-react";
@@ -9,90 +9,25 @@ import { useAuth } from "../contexts/AuthContext";
 const QuestionDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const [question, setQuestion] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [newAnswer, setNewAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Mock data - in a real app, this would be fetched based on the ID
-  const question = {
-    id: "1",
-    title: "How to center a div in CSS?",
-    description: `<p>I have been trying to center a div element both horizontally and vertically, but I can't seem to get it right. I've tried using flexbox and grid but nothing works as expected.</p>
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      try {
+        const res = await fetch(`/api/questions/${id}`);
+        setQuestion(res.data.question);
+      } catch (error) {
+        console.error("Failed to fetch question:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-<p>Here's my current CSS:</p>
-
-<pre><code>.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.centered-div {
-  width: 200px;
-  height: 100px;
-  background-color: blue;
-}</code></pre>
-
-<p>The div appears centered horizontally but not vertically. What am I missing?</p>`,
-    author: {
-      username: "webdev_starter",
-      avatar:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
-      reputation: 234,
-    },
-    tags: ["css", "flexbox", "layout"],
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    views: 1205,
-    votes: 15,
-    isBookmarked: false,
-  };
-
-  const answers = [
-    {
-      id: "1",
-      content: `<p>The issue is that your container probably doesn't have a defined height. For flexbox centering to work vertically, the container needs to have a height.</p>
-
-<p>Try adding:</p>
-
-<pre><code>.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; /* This is what you're missing */
-}</code></pre>
-
-<p>The <code>min-height: 100vh</code> ensures your container takes up at least the full viewport height, giving flexbox something to center against.</p>`,
-      author: {
-        username: "css_expert",
-        avatar:
-          "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
-        reputation: 1520,
-      },
-      createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
-      votes: 23,
-      isAccepted: true,
-    },
-    {
-      id: "2",
-      content: `<p>Another approach is to use CSS Grid, which can be even simpler:</p>
-
-<pre><code>.container {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-}</code></pre>
-
-<p>The <code>place-items: center</code> is shorthand for both <code>align-items: center</code> and <code>justify-items: center</code>.</p>`,
-      author: {
-        username: "grid_master",
-        avatar:
-          "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
-        reputation: 890,
-      },
-      createdAt: new Date(Date.now() - 30 * 60 * 1000),
-      votes: 12,
-      isAccepted: false,
-    },
-  ];
+    fetchQuestion();
+  }, [id]);
 
   const handleAnswerSubmit = async (e) => {
     e.preventDefault();
@@ -106,6 +41,11 @@ const QuestionDetail = () => {
     setNewAnswer("");
     setIsSubmitting(false);
   };
+
+  if (loading) return <div className="text-center py-12">Loading question...</div>;
+  if (!question) return <div className="text-center py-12">Question not found.</div>;
+
+  const answers = question.answers || [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

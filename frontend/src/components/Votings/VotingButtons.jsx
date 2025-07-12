@@ -4,31 +4,59 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 const VotingButtons = ({
   initialVotes,
   initialUserVote = null,
+  answerId,
+  userId,
   onVote,
   className = "",
 }) => {
   const [votes, setVotes] = useState(initialVotes);
   const [userVote, setUserVote] = useState(initialUserVote);
 
-  const handleVote = (voteType) => {
+  const handleVote = async (voteType) => {
+
     let newVotes = votes;
     let newUserVote = voteType;
+    let apiVote;
+    let votePayload = null;
 
-    // Remove previous vote if exists
     if (userVote === "up") newVotes--;
     if (userVote === "down") newVotes++;
-
-    // Apply new vote or remove if same
     if (voteType === userVote) {
       newUserVote = null;
+      apiVote = null;
     } else {
+      newUserVote = voteType;
+      apiVote = voteType === "up" ? 1 : 0;
+
       if (voteType === "up") newVotes++;
       if (voteType === "down") newVotes--;
     }
 
-    setVotes(newVotes);
-    setUserVote(newUserVote);
-    onVote?.(newUserVote);
+    try {
+      if (newUserVote !== null) {
+        const response = await fetch("http://localhost:5000/api/votes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            answer_id: answerId,
+            user_id: userId,
+            vote: votePayload,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to cast vote");
+        }
+
+        console.log("✅", data.message);
+      }
+    } catch (err) {
+      console.error("❌ Voting failed:", err.message);
+    }
   };
 
   return (

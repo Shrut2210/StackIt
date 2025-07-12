@@ -1,70 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Filter, TrendingUp, Clock, Users } from "lucide-react";
 import QuestionCard from "../components/Questions/QuestionCard";
 // import { useAuth } from "../contexts/AuthContext";
 
 const HomePage = () => {
-  //   const { user } = useAuth();
+  const [questions, setQuestions] = useState([]);
   const [sortBy, setSortBy] = useState("newest");
-
-  // Mock data - in a real app, this would come from an API
-  const questions = [
-    {
-      id: "1",
-      title: "How to center a div in CSS?",
-      description:
-        "<p>I have been trying to center a div element both horizontally and vertically, but I can't seem to get it right. I've tried using flexbox and grid but nothing works as expected.</p>",
-      author: {
-        username: "webdev_starter",
-        avatar:
-          "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
-        reputation: 234,
-      },
-      tags: ["css", "flexbox", "layout"],
-      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      views: 1205,
-      answers: 3,
-      votes: 15,
-      hasAcceptedAnswer: true,
-    },
-    {
-      id: "2",
-      title: "React useState hook not updating state immediately",
-      description:
-        "<p>I'm having an issue where my state is not updating immediately after calling setState. I understand this is asynchronous, but how can I access the updated value right after setting it?</p>",
-      author: {
-        username: "react_learner",
-        avatar:
-          "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
-        reputation: 156,
-      },
-      tags: ["react", "hooks", "javascript"],
-      createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
-      views: 892,
-      answers: 2,
-      votes: 8,
-      hasAcceptedAnswer: false,
-    },
-    {
-      id: "3",
-      title: "Best practices for API error handling in Node.js",
-      description:
-        "<p>What are the recommended patterns for handling errors in Node.js APIs? Should I use try-catch blocks everywhere or is there a more elegant solution?</p>",
-      author: {
-        username: "backend_dev",
-        avatar:
-          "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2",
-        reputation: 567,
-      },
-      tags: ["nodejs", "express", "error-handling"],
-      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
-      views: 445,
-      answers: 1,
-      votes: 12,
-      hasAcceptedAnswer: false,
-    },
-  ];
+  const [loading, setLoading] = useState(true);
 
   const stats = [
     { label: "Questions", value: "2.3k", icon: Users },
@@ -72,9 +15,28 @@ const HomePage = () => {
     { label: "Active Users", value: "456", icon: Clock },
   ];
 
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/questions");
+        const result = await response.json();
+        if (result.status === 200) {
+          setQuestions(result.data);
+        } else {
+          console.error("Failed to fetch questions");
+        }
+      } catch (err) {
+        console.error("Error:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -84,18 +46,9 @@ const HomePage = () => {
             A place to ask questions, share knowledge, and learn together
           </p>
         </div>
-        {/* {user && (
-          <Link
-            to="/ask"
-            className="mt-4 md:mt-0 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Ask Question
-          </Link>
-        )} */}
+        
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {stats.map((stat, index) => (
           <div
@@ -115,62 +68,63 @@ const HomePage = () => {
         ))}
       </div>
 
-      {/* Content */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Main Content */}
         <div className="lg:col-span-3">
-          {/* Sort Options */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">
               Latest Questions
             </h2>
             <div className="flex items-center space-x-4">
               <div className="flex bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setSortBy("newest")}
-                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    sortBy === "newest"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  Newest
-                </button>
-                <button
-                  onClick={() => setSortBy("trending")}
-                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    sortBy === "trending"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  Trending
-                </button>
-                <button
-                  onClick={() => setSortBy("unanswered")}
-                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    sortBy === "unanswered"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  Unanswered
-                </button>
+                {["newest", "trending", "unanswered"].map((label) => (
+                  <button
+                    key={label}
+                    onClick={() => setSortBy(label)}
+                    className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                      sortBy === label
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    {label.charAt(0).toUpperCase() + label.slice(1)}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Questions List */}
-          <div className="space-y-4">
-            {questions.map((question) => (
-              <QuestionCard key={question.id} question={question} />
-            ))}
-          </div>
+          {loading ? (
+            <p>Loading questions...</p>
+          ) : (
+            <div className="space-y-4">
+              {questions.map((question) => (
+                <QuestionCard
+                  key={question.id}
+                  question={{
+                    id: question.id,
+                    title: question.title,
+                    description: `<p>${question.description}</p>`,
+                    author: {
+                      username: `user-${question.author_id}`,
+                      avatar:
+                        question.image_url ||
+                        "https://via.placeholder.com/100",
+                      reputation: Math.floor(Math.random() * 1000),
+                    },
+                    tags: ["javascript"], 
+                    createdAt: new Date(question.created_at),
+                    views: Math.floor(Math.random() * 1000),
+                    answers: Math.floor(Math.random() * 5),
+                    votes: Math.floor(Math.random() * 30),
+                    hasAcceptedAnswer: false, 
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
-          {/* Popular Tags */}
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Popular Tags
@@ -194,7 +148,6 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* Hot Questions */}
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Hot Questions
